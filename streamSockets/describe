@@ -1,0 +1,12 @@
+To create a server, you need to:
++ create a socket
++ bind the socket to an address and port
++ listen for incoming connections
++ wait for clients
++ accept a client
++ send and receive data.
+
+To create a client, you need to:
++ create a socket
++ connect to the server
++ send and receive data
