@@ -1,0 +1,87 @@
+Transport Layer:
+################
+	+ TCP - Transmission Control Protocol
+	+ UDP - User Datagram Protocol
+	+ SCTP - Stream Control Transfer Protocol
+	+ Process to Process delivery of message.
+	+ TCP provides - Error Checking, Error Control, Flow Control and Congestion Control.
+	+ DNS(Domain Name Service)
+		++ Uses UDP on port number 53.
+			+++ Client - Single UDP request.
+			+++ Server - Single UDP response.
+		++ Uses TCP when response size is more than 512 bytes.
+	+ Local(or remote) host is identified by its IP address
+	+ Local (or remote) process is identified by its port number.
+	+ Socket := IP address, port number, Transport layer protocol.
+
+	====
+	UDP
+	====
+	+ UDP id connectionless, unreliable(no handshaking) end-to-end protocol.
+	+ Example - VoIP, cannot tolerate the delay of handshaking process and setup, however they can tolerate occassional errors so they use UDP instead of TCP.
+	
+	====
+	TCP
+	====
+	+ Connction oriented, point to point protocol.
+	+ It creates a virtual connection between two TCP's to send Data.
+	+ TCP is point to point and thus doesnot support multicasting and broadcasting(because client and server needs handshaking).
+	+ HTTP, SMTP, Telnet, FTP use TCP because they cannot tolerate data losses.
+	+ Whenever u need error control and flow control u need to use sequence numbersfor the messages otherwise there is no way to request retransmission.
+	+ Ack number, sent by receiver, is the number of first byte expected to be received by the receiver.
+	+ Sender can piggyback the data bytes it is sending.
+	+ Acknowledgements are cumulitive. ACK500 means all packets prior to 500 are received.
+	+ Window Size:(Receive window)
+		++ Used by receiver to stop sender from overwhelming it with messages.
+		++ Every time the transport layer delivers packets to the application layer , the window size increases as it has more space and vice versa .
+		++ Maximum window size is 2^16 bytes.
+	+ Three-way handshaking:
+		++ Client sends packet with SYN flag on and a SEQUENCE number(say 5000).
+		++ Server replies with ACK and SYN flag on,(SEQ say 15000 nad ACK: 5001).
+		++ Client replies with ACK flag on.(SEQ: 80001, ACK: 15001).
+	+ For process termination only thing changes is FIN flag instead of SYN flag.
+	+ Retransmission :
+		++ Timeout
+		++ Three Acknowledgements(duplicate).
+	+ Fast Retransmission : 
+		++ Timeout sometimes are very large, so duplicate acknowledgements could be used to detect loss of packets.
+		++ Generally 3 duplicate ACK's are considered enough to indicate the loss of packets.
+	+ TCP Flow Control:
+		-------------------------
+		|           |           |
+		|  spare    |  TCP data |
+		|    room   | in buffer |
+		|           |           |
+		|           |           |
+		-------------------------
+       <--RECV_WNDW-->
+       <------RECV Buffer------->
+
+       ++Recv_Window = Recv_buffer -[LastRecvdByte - LastByteRead]
+       ++ Receiver adversites spare room by including value of RcvWindow in segments.
+       ++ Sender limits inAcked data to RcvWindow.
+       ++ This gaurantess that the buffer doesnot overflow.
+    + Congestion Control:
+    	++ Congestion informally means "too many sources sending too much data too fast for network to handle".
+    	++ Manifestations:
+    		+++ Lost Packets.
+    		+++ Long Delays.
+    	++ The sender needs to determine wether the network is congested or not.
+    	++ The sender doesnot have a way of knowing the actual reason behind timeout expired because of congestion not because of the receiver.
+    	++ If sender receives 3ACKs for a segment that has already been acknowledged, sender concludes that the segment was lost, because the network was congested or the packet was lost, however it knows that the network was not badly congested.
+    	++ Advertised Window(awnd): The receiver tells the sender how much space it has on its buffer.awnd is a dynamic parameter.
+    	++ Congestion Window(cwnd): The network doesnot tell the sender how much space it has, so the sender need to guesshow much space it has, os the sender needs to guess. This guess may be denoted by cwnd.
+    	++ Maximum number of bytes that can be sent are Min(awnd, cwnd).
+    	++ Offered Load - Whatever is dumped in network.
+    	++ Carrier Load(Throughput) - What is delivered. 
+    	++ TCP SLOW START PHASE:
+    		+++ In the Slow Start algorithm, cwnd is initially set to one and then increase by one for every ACK received.
+    		+++ cwnd will eventually reach a threshold, this will result it to go in another phase called the congestion avoidance phase.
+    		++ Now we double the cwnd every RTT(increase exponentially) until first loss event.
+    		++ Initially rate is slow but ramps up exponentially fast.
+    	++ Congestion Avoidance:
+    		+++ In this phase the cwnd is increased additively(thus additive increase) until congestion is detected.
+    	++ An implementation reacts to congestion detection in one of the following ways: 
+    		+++ Tahoe:= If detection is by timeout, a new slow start phase is started.
+    		+++ Reno:= If detection is bt 3ACK's, a new congestion avoidanc phase starts.
+
