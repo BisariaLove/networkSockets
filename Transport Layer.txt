@@ -54,8 +54,8 @@ Transport Layer:
 		|           |           |
 		|           |           |
 		-------------------------
-       <--RECV_WNDW-->
-       <------RECV Buffer------->
+       		<--RECV_WNDW-->
+       		<------RECV Buffer------->
 
        ++Recv_Window = Recv_buffer -[LastRecvdByte - LastByteRead]
        ++ Receiver adversites spare room by including value of RcvWindow in segments.
