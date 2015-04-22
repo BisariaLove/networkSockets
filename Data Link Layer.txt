@@ -1,0 +1,87 @@
+Data Link Layer
+################
+
++ DLL(Layer 2) is a link-to-link basis protocol and not end-to-end basis protocol.
++ DLL is implemented in each node.
++ LL is implemented in NIC(Network Interface Card).
++ DLL Services
+	++ Framing
+	++ Error Detection
+	++ Flow Control
+		+++ Stop and Wait
+		+++ Sliding Window protocol
++ Error Control
+	++ Receiver simply drops the packet
+	++ ARQ(Automatic Repeat Request) protocols
+	++ Error Correction(seldom used)
+		+++ Receiver is not only able to detect the error, but also locate it and correct it.
++ Point to Point DLC protocols
+	++ One Sender, One Receiver, One link
+	++ PPP (Point to Point Protocol)
+	++ HDLC (High Level Data Link Control)
++ PPP Protocol
+	++ Packet Framing is performed.
+	++ Only error defection is performed (no correction or recovery).
+	++ Corrupted frames silently dropped.
+	++ No Flow Control.
+	++ Error recovery, flow control, and data-reordering are relegated to higher layers!
+	++ Data Frame:
+	__________________________________________________
+	| flag | address | control | info | check | flag | 
+	---------------------------------------------------
+
+	++ address is 11111111 (as it is poin to point).
+	++ check - to detect errors in the frame.
++ Framing
+	++ Fixed Size Framing - no need to define the boundaries.
+	++ Variable Sized Framing - bit- oriented or byte-oriented.
+		+++ Byte-stuffing
+
++ Protocols
+	++ For Noiseless Channel
+		+++ Simplest
+		+++ Stop-and-Wait
+	++ For Noisy Channel
+		+++ Stop-And-Wait ARQ
+		+++ Go-Back-N ARQ
+		+++ Selective Repeat ARQ
++ Stop-And-Wait
+	++ One frame sent
+	++ Acknowledgement received
+	++ Then the next frame sent
+	++ Only two sequence number 0 and 1.
++ Stop-and-Wait ARQ
+	++ Copy of the frame is kept and the retransmission is done when the timer expires or when the acknowledgement gets damaged.
++ Go-Back-N ARQ
+	++ Uses Sliding Window protocol.
+	++ More that one rame can be outstanding.
+	++ Sequence numbers are 2^m(0, 2^m-1).
+	++ Sending window is of size 2^m; Receiving window is of size 1.
+	++ The receiver sends an ACK if a frame has arrived with no errors detected. If a frame is damaged or received out of order, the receiver is silent and will discard all subsequent frames until it receives the frmae it is exoecting.
+	++ The silence of the receiver causes the timer to time out and thus all the other frames are resent.
+	++ Cumulative ACK's are supported.
++ Selective Repeat ARQ
+	++ Out-of-order frames are buffered y the receiver. Receiver only acknowlwdges the frames that are in order.
+	++ the process at the receiver is therefere more complex.
++ Piggybacking
+	++ Piggybacking is sending data with the NAK and ACK messages.
+	++ It is used in the bidirectional cases, when both the nodes are sending and receiving.
++ Medium Access Control(MAC) Protocols:
+	++ Mainly used in case of Multi-point connection.
+	++  Data Link Layer can be sub divided into.
+		___________________________________
+		|								  |
+		|		Data Link Control		  |
+		|	Multiple-access resolution    |
+		| 								  |
+		-----------------------------------
+	++ Example of multi-point connection are Ethernet(LAN) and cable-access. If two or more nodes transmit simultaneously collisions occurs.
++ IEEE 802 Project
+	++ Data Link Layer has been divided into
+		+++ Logical Link Control
+		+++ Media Access Control
+	++ Previously data link control tasks(framing, error detection and control and flow control) are collected into sublayer LLC.
+	++ MAC layer provides different protocols for different LANs.
+	++ LLC hides the details of the MAC protocols from Network Layer.
+	++ CSMA/CD as a MAC method for Ethernet and Token ring passing method for Token Ring LANs.
+	
