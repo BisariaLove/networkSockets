@@ -70,10 +70,10 @@ Data Link Layer
 	++ Mainly used in case of Multi-point connection.
 	++  Data Link Layer can be sub divided into.
 		___________________________________
-		|								  |
-		|		Data Link Control		  |
-		|	Multiple-access resolution    |
-		| 								  |
+		|				  |
+		|	Data Link Control  	  |
+		|	Multiple-access resolution|
+		| 				  |
 		-----------------------------------
 	++ Example of multi-point connection are Ethernet(LAN) and cable-access. If two or more nodes transmit simultaneously collisions occurs.
 + IEEE 802 Project
