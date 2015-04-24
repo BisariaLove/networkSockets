@@ -1,0 +1,130 @@
+Network Layer Protocols
+#######################
+
++ IPv4
++ ARP
++ RARP (Reverse ARP)
+
++ IP is a connectionless protocol.
++ IP doesnot gaurantee reliable delivery, erroe-free delivery, ordered delivery, or even delivery at all.
++ IP layer relies on the Transport layer to take care of these problems.
++ Network layer at Source:
+	++ Responsible for creating a packet from another protocol, such as transport layer protocol or a routing protocol.
+	++ Also responsible for checking its routing table to find the routing information, such as the outgoing interface of the packet or the physical address of the next node.
+	++ Large packets are fragmanted.
++ Network Layer at Destination:
+	++ Makes sure that the destination address on the packet is same as the host address.
+	++ It waits until all fragments have arrives, and then reassembles then and then delivers reassembled packets to the Tranport layer.
+	++ There is no routing table consultation at destination's. 
+	++ Both source and router consult with the routing table to find the next hop.
++ Network Layer at Routers:
+	++ The Network Layer at a router or L3 switch is responsible for routing packet.
+	++ When the packet arrives at the router or L3 switch it consults its routing table and finds the interface from which the packet must be sent.
+	++ The packet after some changes in the header(routing information updated) is passed ti data link layer again.
+
++ IPv4 Packet Format:
+	++ Service field in Packet header:
+		+++ 0000 - Normal
+		+++ 0001 - Minimize Cost
+		+++ 0010 - Maximize Reliability
+		+++ 0100 - Maximize Throughput
+		+++ 1000 - Minimize delay
+
+	++ TTL (Time to Live):
+		+++ Prevents the packet to go into possible loops.
+		+++ Every semder sets up the field.
+		+++ Ifa packet with TTL 0 (TTL expired) reaches the router it is dropped.
+		+++ If a sender doesnot want the packet to leave the network it sets its ttl to 1,and thus router sets it to zero and then it gets dropped.
+	++ Protocol
+		+++ Protocol bits are to define the protocol that is using the service of IP. It defines the protocol that the packet should be delivered to at the final destination.
+
++ IPv4 Fragmentation:
+	++ Ip packet needs to be fragmented into smaller pieces. e.g., the payload of the Ethernet frame can be 1500 bytes maximum.
+	++ IP packet goes through different networks and thus fragmentation may occur.
+	++ A fragmented packet may further be fragmenyed.
+	++ REassembly is done at the destination and not at the router.
+	++ Header of the packet changes, Total length changes, Header checksum changes.
+	++ If the fragmentation is too much, throughput goes down as there are too much of extra bits.
+	++ Fragments are indicated by the 'FLAGS giels in the header'.
+	++ There are two possible values:
+		+++ D = 1: Donot fragment
+		+++ M = 1: More Fragments
+	++ Fragment offset works rather than numbering because a fragment can further be fragmented.
++ IPv4 Addressing:
+	++ Address = Network address + Host Address.
+	++ Classful addressing:
+		+++ A : '0'    ; 0-127
+		+++ B : '10'   ; 128-191
+		+++ C : '110'  ; 192 - 223
+		+++ D : '1110' ; 224 - 239
+		+++ E : '1111' ; 240 - 255
+
++ 255.255.255.255 (all 1s) means an address on the same network is 'Broadcast within the same network' address; used in DHCP during the discovery phase.
++ 0.0.0.0 says the the host dowsnot have an address yet. It is used during the request phase in DHCP.
++ Limited Broadcast vs Direct Broadcast
++ Subnetting: 
+	++ Subnetting the process of dividing a network into smaller clusters.
++ Private IP Addressing:
+	++ A public IP address is required when we want to communicate across a public network.
+	++ For a private network if we want to communicate internally, we do not need the IP addresses.
+	++ But for the hosts from outside to communicate with the internal hosts, we need 'NAT'[Network Address Translation].
+	++ The NAT table records the translation(Private IP Address to a public IP address).
+	++ NAT is a special type of proxy server.
+
++ IP Packet - Delivery, Forwarding and Routing
+	++ Local Delivery - Packet encapsulated into an ethernet frame and delivered to the host(no router required).
+	++ Remote delivery - source and destination are on different networks.
+	++ Routing is a Network Layer Process, whereas forwarding is a Network Layer/Data Link Layer Process.
++ Routing Table:
+	_____________________________________________________
+	| N/W address | Mask | Next-hop address | Interface |  
+	-----------------------------------------------------
+
++ Forwarding Module and Routing Table:
+	++ When the router receives the packet it extracts(forms) the destination IP address and logically ANDs it bit by bit by every entry in the subnet mask column and matches the result with the network address.
+	++ The reason Search Table goes through ARP, is that when it finds the next hop IP address from the table, then it needs the MAc address of the next hop(wether router or the destination).
+	++ ARP is a local protocol and it is used to get the MAC address of a node  in the same network.
+	++ Linux has a ARP cache.
++ Routing Algorithms:
+	++ Intradomain ------------ Distant Vector - RIP
+						|
+						|
+						-------- Link State - OSPF
+
+	++ Interdomain ------------- Path Vector - BGP
+
++ Ditance Vector Routing Tables: 
+	++ A vector is a sequence of entries.
+	++ A distance  vector is a vector that shows the distance betwee that router and every other router in the network that the router knows of.
+	++ A router will send to its neighbhors its distance vector that has the distance between the router and all other routers in the network that the router is aware of(not only its neighbhors).
+	++ Every router exchanges its distance vectors.
+	++ Routing table:
+			____________________
+			| To | Cost | Next |  
+			--------------------
+
++ RIP 
+	++ In an Autonomous System, we are dealing with routers and networks(links). Routes have  routing table, networks do not.
+	++ The destination in the routing table is a network.
+	++ Distance is based on hop count.
+	++ Infinity is defines as 16, i.e, any route in an AS using RIP cannot have more than 15 hops.
+	++ RIP is used for big networks because RIP is not scalable.
+	++ Instability problem with RIP:
+		+++ If A sends the packet to B, the packet goes back and forth, i.e, bounces and never reaches X.
+		+++ One solution is to send another column(next hop)but that means more routing information over the link and more waste of capacity.
+		+++ Another solution: redefine infinity, but that would mean that RIP cannot be used for large networks.
+
++ Link State for OSPF protocol:
+	++ The information is just about the states of links, not the distance to other routers.
+	++ Router A will broadcast to all routers a Link State Packet(LSP) saying it has 3 links: 5 to B, 2 to C, 3 to D.
+	++ All routers will receive the information, some directly and some through other routers.
+	++ Dijkstra's Algorithm is used to calculate the routes.
++ Address Mapping - Logical to Physical Address: ARP
++ Address Mapping - Physical to Logical Addres: RARP, BOTP, DHCP:
+	++ Problem with RARP : Broadcast cannot go outside network since it is a data link layer protocol.
+	++ BOOTP (Bootstrap Protocol): Application layer protocol.
+		+++ Packet broadcasted to relay agent which is the unicasted by relay agent to the DHCP server.
++ ICMP (Interne Control Message Protocol):
+	++ ICMP messages are either error-reporting or query messages.
+	++ No response to a datagram will be generated in response to a datagram carrying an ICMP error messgage.
+
