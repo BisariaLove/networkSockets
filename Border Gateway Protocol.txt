@@ -1,0 +1,15 @@
+Border Gateway Protocol
+#######################
+
++ BGP is an interterautonomous system routing protocol.
++ An autonomous system is a network or group of networks under a common administration and with common routing policies.
++ BGP is used to exchange routing information for the Internet and is the protocol used between Internet service providers (ISP).
++ Customer networks, such as universities and corporations, usually employ an Interior Gateway Protocol (IGP) such as RIP or OSPF for the exchange of routing information within their networks. 
++ Customers connect to ISPs, and ISPs use BGP to exchange customer and ISP routes.
++ When BGP is used between Autonomous Systems(AS), the protocol is referred to as External BGP(EBGP). If a service provider is using BGP to exchange routes within an AS, then the protocol is referred to as Interior BGP.
+
++ Introduction:
+	++ CIDR(classless interdomain routing) is used by BGP to reduce the size of the Internet routing tables.
+	++ BGP neighbors exchange full routing information when the TCP connection between neighbors is first established.
+	++  When changes to the routing table are detected, the BGP routers send to their neighbors only those routes that have changed.
+	++ BGP routers do not send periodic routing updates, and BGP routing updates advertise only the optimal path to a destination network.
